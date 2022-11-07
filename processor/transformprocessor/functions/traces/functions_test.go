@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package logs
+package traces
 
 import (
 	"testing"
@@ -20,12 +20,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottllogs"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/internal/common"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottltraces"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/functions/common"
 )
 
 func Test_DefaultFunctions(t *testing.T) {
-	expected := common.Functions[ottllogs.TransformContext]()
+	expected := common.Functions[ottltraces.TransformContext]()
 	actual := Functions()
 	require.Equal(t, len(expected), len(actual))
 	for k := range actual {

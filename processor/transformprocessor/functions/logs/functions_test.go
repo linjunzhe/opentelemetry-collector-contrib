@@ -12,14 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package traces // import "github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/internal/traces"
+package logs
 
 import (
-	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottltraces"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/internal/common"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottllogs"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/functions/common"
 )
 
-func Functions() map[string]interface{} {
-	// No trace-only functions yet.
-	return common.Functions[ottltraces.TransformContext]()
+func Test_DefaultFunctions(t *testing.T) {
+	expected := common.Functions[ottllogs.TransformContext]()
+	actual := Functions()
+	require.Equal(t, len(expected), len(actual))
+	for k := range actual {
+		assert.Contains(t, expected, k)
+	}
 }

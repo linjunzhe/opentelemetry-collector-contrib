@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package logs // import "github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/internal/logs"
+package traces // import "github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/functions/traces"
 
 import (
 	"context"
 
 	"go.opentelemetry.io/collector/component"
-	"go.opentelemetry.io/collector/pdata/plog"
+	"go.opentelemetry.io/collector/pdata/ptrace"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottllogs"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottltraces"
 )
 
 type Processor struct {
-	statements []*ottl.Statement[ottllogs.TransformContext]
+	statements []*ottl.Statement[ottltraces.TransformContext]
 }
 
 func NewProcessor(statements []string, settings component.TelemetrySettings) (*Processor, error) {
-	ottlp := ottllogs.NewParser(Functions(), settings)
+	ottlp := ottltraces.NewParser(Functions(), settings)
 	parsedStatements, err := ottlp.ParseStatements(statements)
 	if err != nil {
 		return nil, err
@@ -39,14 +39,14 @@ func NewProcessor(statements []string, settings component.TelemetrySettings) (*P
 	}, nil
 }
 
-func (p *Processor) ProcessLogs(ctx context.Context, td plog.Logs) (plog.Logs, error) {
-	for i := 0; i < td.ResourceLogs().Len(); i++ {
-		rlogs := td.ResourceLogs().At(i)
-		for j := 0; j < rlogs.ScopeLogs().Len(); j++ {
-			slogs := rlogs.ScopeLogs().At(j)
-			logs := slogs.LogRecords()
-			for k := 0; k < logs.Len(); k++ {
-				tCtx := ottllogs.NewTransformContext(logs.At(k), slogs.Scope(), rlogs.Resource())
+func (p *Processor) ProcessTraces(ctx context.Context, td ptrace.Traces) (ptrace.Traces, error) {
+	for i := 0; i < td.ResourceSpans().Len(); i++ {
+		rspans := td.ResourceSpans().At(i)
+		for j := 0; j < rspans.ScopeSpans().Len(); j++ {
+			sspan := rspans.ScopeSpans().At(j)
+			spans := sspan.Spans()
+			for k := 0; k < spans.Len(); k++ {
+				tCtx := ottltraces.NewTransformContext(spans.At(k), sspan.Scope(), rspans.Resource())
 				for _, statement := range p.statements {
 					_, _, err := statement.Execute(ctx, tCtx)
 					if err != nil {

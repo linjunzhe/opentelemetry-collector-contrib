@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package metrics // import "github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/internal/metrics"
+package metrics // import "github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/functions/metrics"
 
 import (
 	"context"

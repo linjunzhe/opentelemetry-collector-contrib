@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package common // import "github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/internal/common"
+package common // import "github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/functions/common"
 
 import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/ottlfuncs"
@@ -37,4 +37,22 @@ func Functions[K any]() map[string]interface{} {
 		"delete_key":           ottlfuncs.DeleteKey[K],
 		"delete_matching_keys": ottlfuncs.DeleteMatchingKeys[K],
 	}
+}
+
+// Registry is used to track and retrieve known operator types
+type Registry[K any] struct {
+	Functions map[string]interface{}
+}
+
+// DefaultRegistry creates a new registry
+func DefaultRegistry[K any]() *Registry[K] {
+	return &Registry[K]{
+		Functions: Functions[K](),
+	}
+}
+
+// Register will register a function to an operator type.
+// This function will return a builder for the supplied type.
+func (r *Registry[K]) Register(key string, function interface{}) {
+	r.Functions[key] = function
 }

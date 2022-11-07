@@ -12,14 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package logs // import "github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/internal/logs"
+package logs // import "github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/functions/logs"
 
 import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl/contexts/ottllogs"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/internal/common"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor/functions/common"
 )
+
+// defaultRegistry is a global registry of operator types to operator builders.
+var defaultRegistry = common.DefaultRegistry[ottllogs.TransformContext]()
 
 func Functions() map[string]interface{} {
 	// No logs-only functions yet.
 	return common.Functions[ottllogs.TransformContext]()
+}
+
+// Register will register an operator in the default registry
+func Register(operatorType string, function interface{}) {
+	defaultRegistry.Register(operatorType, function)
 }
